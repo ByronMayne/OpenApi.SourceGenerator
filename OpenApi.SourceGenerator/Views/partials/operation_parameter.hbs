@@ -1,0 +1,10 @@
+{{#ParameterLocation.ifQuery In}}
+[FromQuery]
+{{else ParameterLocation.ifPath}}
+[FromPath]
+{{else ParameterLocation.isHeader}}
+[FromHeader]
+{{else}}
+// Could not figure it out
+{{/ParameterLocation.ifQuery }}
+{{> schema Schema}} {{Name}}

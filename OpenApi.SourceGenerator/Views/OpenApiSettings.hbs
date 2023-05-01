@@ -1,0 +1,16 @@
+{{> header}}
+
+using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace OpenApi
+{
+    public class OpenApiSettings
+    {
+        /// <summary>
+        /// Gets or sets if the spesefication that is provide should insert the
+        /// current host as a server enter.
+        /// </summary>
+        public bool AddHostToServers { get; set; }
+    }
+}

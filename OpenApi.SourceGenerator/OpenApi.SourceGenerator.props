@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+  <PropertyGroup Condition="$(Configuration) == 'Debug'">
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OpenApiFileName Condition="Exists('openapi.json')">openapi.json</OpenApiFileName>
+    <OpenApiFileName Condition="Exists('openapi.yaml')">openapi.json</OpenApiFileName>
+    <OpenApiFileName Condition="Exists('openapi.yml')">openapi.json</OpenApiFileName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <AdditionalFiles Include="$(OpenApiFileName)" />
+    <EmbeddedResource Include="$(OpenApiFileName)">
+      <LogicalName>OpenApiSpecification</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

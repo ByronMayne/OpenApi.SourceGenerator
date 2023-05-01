@@ -1,0 +1,36 @@
+{{> header}}
+
+using System;
+using System.Threading;
+using OpenApi;
+using {{Globals.RootNamespace}};
+using {{Globals.RootNamespace}}.Commands;
+using Microsoft.Extensions.DependencyInjection;
+{{#with Model}}
+
+namespace Microsoft.Extensions.DependencyInjection
+{
+    public static class OpenApiServiceCollectionExtensions
+    {
+        public static IServiceCollection AddOpenApi(this IServiceCollection serviceCollection, Action<OpenApiSettings>? configure = null)
+        {
+            OpenApiSettings settings = new OpenApiSettings();
+            configure?.Invoke(settings);
+            serviceCollection.AddSingleton<OpenApiSettings>(settings);
+            {{#if Operations}}
+            RegisterCommands(serviceCollection);
+            {{/if}}
+            return serviceCollection;
+        }
+
+        {{#if Operations}}
+        private static void RegisterCommands(IServiceCollection serviceCollection)
+        {
+            {{#each Operations}}
+            serviceCollection.AddTransient<I{{MethodName}}Command, {{MethodName}}Command>();
+            {{/each}}
+        }
+        {{/if}}
+    }
+}
+{{/with}}

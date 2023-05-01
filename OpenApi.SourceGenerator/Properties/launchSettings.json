@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Generate: Petstore": {
+      "commandName": "DebugRoslynComponent",
+      "workingDirectory": "$(OutDir)",
+      "targetProject": "D:\\Repositories\\OpenApi.SourceGenerator\\OpenApi.Petstore\\OpenApi.Petstore.csproj"
+    }
+  }
+}

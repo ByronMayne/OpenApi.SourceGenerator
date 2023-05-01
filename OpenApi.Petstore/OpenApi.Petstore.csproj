@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>OpenApi.Petstore</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.3" />
+    <PackageReference Include="Seed.IO" Version="2.0.1" />
+    <PackageReference Include="SharpYaml" Version="2.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenApi.SourceGenerator\OpenApi.SourceGenerator.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Import Project="..\OpenApi.SourceGenerator\OpenApi.SourceGenerator.props" />
+
+  <ItemGroup>
+    <Reference Include="Microsoft.OpenApi.Readers">
+      <HintPath>..\.nuget\microsoft.openapi.readers\1.6.3\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Update="openapi.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+  </ItemGroup>
+</Project>

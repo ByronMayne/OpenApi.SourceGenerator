@@ -1,0 +1,32 @@
+{{> header}}
+
+using System;
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using {{Globals.RootNamespace}}.Commands;
+
+namespace {{Globals.RootNamespace}}.Controllers
+{
+    {{#with Model}}
+    [ApiController]
+    public class {{TypeName}}Controller : Controller
+    {
+        {{#each Operations}}
+        {{#if Summary}}
+        /// <summary>
+        /// {{Summary}}
+        /// </summary>
+        {{/if}}     
+        [Http{{Type}}("{{Path}}")]
+        public Task<IActionResult> {{MethodName}}(
+            [FromServices] I{{MethodName}}Command command,
+            {{#each Parameters}}
+            {{Schema}} {{Name}},
+            {{/each}}
+            CancellationToken cancellationToken)
+            => command.ExecuteAsync({{#each Parameters}}{{Name}}, {{/each}}cancellationToken);
+
+        {{/each}}
+    }   
+    {{/with}}
+}

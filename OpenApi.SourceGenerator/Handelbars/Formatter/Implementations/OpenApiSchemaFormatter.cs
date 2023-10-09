@@ -1,17 +1,20 @@
 ﻿using HandlebarsDotNet;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
-namespace OpenApi.SourceGenerator.Handelbars.Formatter
+namespace OpenApi.SourceGenerator.Handelbars.Formatter.Implementations
 {
-    internal class OpenApiSchemaFormatter : AbstractFormatter<OpenApiSchema>
+    internal class OpenApiSchemaFormatter : HandlebarsFormatter<OpenApiSchema>
     {
-        public OpenApiSchemaFormatter(OpenApiFormatterOptions options) : base(options)
-        {
-        }
+        public OpenApiSchemaFormatter(OpenApiFormatterOptions options)
+        { }
 
-        public override void Format(OpenApiSchema schema, EncodedTextWriter writer)
+
+        public override void Format(ref FormatContext context, OpenApiSchema value, in EncodedTextWriter writer)
         {
-            writer.WriteSafeString(FormatSchema(schema));
+            writer.WriteSafeString(FormatSchema(value));
         }
 
         private string FormatSchema(OpenApiSchema schema)

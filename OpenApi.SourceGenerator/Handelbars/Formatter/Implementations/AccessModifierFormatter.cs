@@ -1,14 +1,18 @@
 ﻿using HandlebarsDotNet;
 using OpenApi.SourceGenerator.Types;
 
-namespace OpenApi.SourceGenerator.Handelbars.Formatter
+namespace OpenApi.SourceGenerator.Handelbars.Formatter.Implementations
 {
-    internal class AccessModifierFormatter : AbstractFormatter<AccessModifier>
+    internal class AccessModifierFormatter : HandlebarsFormatter<AccessModifier>
     {
-        public AccessModifierFormatter(OpenApiFormatterOptions options) : base(options)
-        { }
+        private readonly OpenApiFormatterOptions m_options;
 
-        public override void Format(AccessModifier value, EncodedTextWriter writer)
+        public AccessModifierFormatter(OpenApiFormatterOptions options)
+        {
+            m_options = options;
+        }
+
+        public override void Format(ref FormatContext context, AccessModifier value, in EncodedTextWriter writer)
         {
             switch (value)
             {

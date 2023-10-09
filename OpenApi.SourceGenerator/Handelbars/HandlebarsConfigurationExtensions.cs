@@ -12,9 +12,10 @@ namespace OpenApi.SourceGenerator.Handelbars
         public static HandlebarsConfiguration AddOpenApiFormatters(this HandlebarsConfiguration configuration, Action<OpenApiFormatterOptions> configure = null)
         {
             OpenApiFormatterOptions options = new OpenApiFormatterOptions();
+            FormatContext context = new FormatContext();
             if (configure != null) configure(options);
-            configuration.FormatterProviders.Add(new OpenApiParameterFormatter(options));
-            configuration.FormatterProviders.Add(new OpenApiSchemaFormatter(options));
+            configuration.FormatterProviders.Add(new FormatterFactory(context, options));
+
 
             return configuration;
         }

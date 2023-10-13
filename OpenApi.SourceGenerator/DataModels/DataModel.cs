@@ -1,5 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using HandlebarsDotNet.IO;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using OpenApi.SourceGenerator.DataModels.Visitors;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,7 +9,7 @@ using System.Text;
 
 namespace OpenApi.SourceGenerator.Components
 {
-    internal abstract class DataModel : IReadOnlyDictionary<string, object>
+	internal abstract class DataModel : IReadOnlyDictionary<string, object>
     {
         private readonly Dictionary<string, object> m_data;
 
@@ -123,5 +125,10 @@ namespace OpenApi.SourceGenerator.Components
 
             return default(T);
         }
+
+        public IDictionary<string, object> ToDataContext()
+            => new Dictionary<string, object>(m_data);
+
+        public abstract void Visit(IModelVisitor visitor);
     }
 }

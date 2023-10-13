@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using OpenApi.SourceGenerator.DataModels.Visitors;
 
 namespace OpenApi.SourceGenerator.DataModels
 {
@@ -32,7 +33,7 @@ namespace OpenApi.SourceGenerator.DataModels
 
         public override string HintName { get; }
 
-        public ClassDataModel(string view, params DataModel[] dataModels) : base(view, dataModels)
+        public ClassDataModel(string view) : base(view)
         {
             TypeName = Path.GetFileNameWithoutExtension(view);
 
@@ -40,5 +41,11 @@ namespace OpenApi.SourceGenerator.DataModels
             string[] components = view.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
             HintName = string.Join("_", components);
         }
-    }
+
+        /// <inheritdoc cref="DataModel"/>
+		public override void Visit(IModelVisitor visitor)
+		{
+			
+		}
+	}
 }

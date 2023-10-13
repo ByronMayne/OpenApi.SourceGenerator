@@ -1,0 +1,24 @@
+{{! controller.hbs }}
+{{> header}}
+
+using System;
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using {{Globals.RootNamespace}}.Commands;
+
+namespace {{Globals.RootNamespace}}.Controllers
+{
+    [ApiController]
+    public class {{TypeName}}Controller : Controller
+    {
+        //{{Name}}
+        {{#each Operations}}
+        {{#if Summary}}
+        /// <summary>
+        /// {{Summary}}
+        /// </summary>
+        {{/if}}     
+        {{> controller_operation}}
+        {{/each}}
+    }
+}

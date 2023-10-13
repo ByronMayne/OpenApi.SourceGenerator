@@ -1,0 +1,25 @@
+﻿{{> header}}
+
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+
+namespace {{Globals.RootNamespace}}.Commands
+{
+    {{#each Parameters}}{{#if x-type-name}}
+    protected enum {{EnumModel.TypeName}} { }
+    {{/if}}
+    {{#/each}}
+
+    public interface I{{MethodName}}Command
+    {
+        {{#if IsDeprecated}}
+        [System.Obsolete]
+        {{/if}}
+        Task<IActionResult> ExecuteAsync({{#each Parameters}}{{Schema}} {{Name}}, {{/each}}CancellationToken cancellationToken);
+    }
+
+    public partial class {{MethodName}}Command : I{{MethodName}}Command
+    {
+        public partial Task<IActionResult> ExecuteAsync({{#each Parameters}}{{Schema}} {{Name}}, {{/each}}CancellationToken cancellationToken);
+    }
+}

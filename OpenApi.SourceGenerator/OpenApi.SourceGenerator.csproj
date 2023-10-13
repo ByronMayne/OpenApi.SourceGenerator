@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.3" />
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.3" />
     <PackageReference Include="Seed.IO" Version="2.0.1" />
-    <PackageReference Include="SourceGenerator.Foundations" Version="1.2.0" />
+    <!--<PackageReference Include="SourceGenerator.Foundations" Version="1.2.0" />-->
     <PackageReference Include="System.Runtime.Loader" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -26,22 +26,25 @@
   <ItemGroup>
     <None Remove="Views\Commands\Command.hbs" />
     <None Remove="Views\Commands\ICommand.hbs" />
+    <None Remove="views\controllers\controller_operation.hbs" />
     <None Remove="Views\Controllers\SwaggerController.hbs" />
     <None Remove="Views\OpenApiSettings.hbs" />
-    <None Remove="Views\ServiceCollectionExtensions.hbs" />
+    <None Remove="Views\service_collection_extensions.hbs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Views\Commands\Command.hbs">
+    <EmbeddedResource Update="Views\command.hbs">
       <LogicalName>OAPI::%(RelativeDir)%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\OpenApiSettings.hbs">
       <LogicalName>OAPI::%(RelativeDir)%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ServiceCollectionExtensions.hbs">
+    <EmbeddedResource Update="Views\service_collection_extensions.hbs">
       <LogicalName>OAPI::%(RelativeDir)%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Commands\" />
+    <Folder Include="Views\Controllers\" />
     <Folder Include="Views\Extensions\" />
   </ItemGroup>
   <Target Name="OASG_EmbedDependencies" BeforeTargets="SGF_EmbedDependencies">
@@ -51,4 +54,5 @@
 			</EmbeddedResource>
     </ItemGroup>
   </Target>
+  <Import Project="..\..\SourceGenerator.Foundations\src\Local.Reference.props" />
 </Project>

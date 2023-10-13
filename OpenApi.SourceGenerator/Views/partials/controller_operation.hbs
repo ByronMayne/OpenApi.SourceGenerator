@@ -1,0 +1,9 @@
+    [Http{{Type}}("{{Path}}")]
+    public Task<IActionResult>
+        {{MethodName}}(
+        [FromServices] I{{MethodName}}Command command,
+        {{#each Parameters}}
+        {{Schema}} {{Name}},
+        {{/each}}
+        CancellationToken cancellationToken)
+            => command.ExecuteAsync({{#each Parameters}}{{Name}}, {{/each}}cancellationToken);

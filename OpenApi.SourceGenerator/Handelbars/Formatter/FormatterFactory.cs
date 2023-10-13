@@ -1,9 +1,11 @@
 ﻿using HandlebarsDotNet;
 using HandlebarsDotNet.IO;
+using OpenApi.SourceGenerator.Components;
 using OpenApi.SourceGenerator.DataModels;
 using OpenApi.SourceGenerator.Handelbars.Formatter.Implementations;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace OpenApi.SourceGenerator.Handelbars.Formatter
@@ -23,9 +25,7 @@ namespace OpenApi.SourceGenerator.Handelbars.Formatter
 			m_context = context;
 			m_types = new List<Type>();
 			m_formatters = new List<IHandlebarsFormatter>();
-			Register(new OpenApiParameterFormatter(options));
 			Register(new OpenApiSchemaFormatter(options));
-			Register(new OperationParameterFormatter(options));
 			Register(new AccessModifierFormatter(options));
 		}
 
@@ -55,6 +55,8 @@ namespace OpenApi.SourceGenerator.Handelbars.Formatter
 				formatter = this;
 				return true;
 			}
+
+
 			return false;
 		}
 	}

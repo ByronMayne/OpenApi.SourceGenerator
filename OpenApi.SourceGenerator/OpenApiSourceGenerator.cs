@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using OpenApi.SourceGenerator.DataModels;
+using OpenApi.SourceGenerator.OpenApi;
 using SGF;
 using System;
 using System.Collections.Generic;
@@ -14,34 +15,6 @@ using System.Runtime.Loader;
 
 namespace OpenApi.SourceGenerator
 {
-    public struct View
-    {
-        public static readonly View SwaggerController = new View();
-        public static readonly View ServiceCollectionExtensions = new View();
-        public static readonly View OpenApiSettings;
-        public static readonly View Controller;
-        public static readonly View ICommand;
-        public static readonly View Command;
-
-        public readonly string ViewPath;
-
-        public View(string viewPath)
-        {
-            ViewPath = viewPath;
-        }
-
-        static View()
-        {
-            SwaggerController = new View("Controllers\\SwaggerController.hbs");
-            ServiceCollectionExtensions = new View("ServiceCollectionExtensions.hbs");
-            OpenApiSettings = new View("OpenApiSettings.hbs");
-            Controller = new View("Controllers\\Controller.hbs");
-            ICommand = new View("Commands/ICommand.hbs");
-            Command = new View("Commands/Command.hbs");
-        }
-    }
-
-
     [Generator]
     internal class OpenApiSourceGenerator : IncrementalGenerator
     {
@@ -72,10 +45,6 @@ namespace OpenApi.SourceGenerator
         {
             _ = configOptions.GlobalOptions.TryGetValue("build_property.rootnamespace", out string defaultNamespace);
 
-            ClassDataModel baseModel = new("")
-            {
-                RootNamespace = defaultNamespace
-            };
             OpenApiSourceFactory factory = new OpenApiSourceFactory(sourceContext)
                 .SetGlobal("RootNamespace", defaultNamespace)
                 .Generate(View.SwaggerController, "SwaggerController.cs")
@@ -87,48 +56,49 @@ namespace OpenApi.SourceGenerator
             OpenApiDocument apiDocument = reader.Read(fileStream, out OpenApiDiagnostic diagnostic);
             _ = apiDocument.ResolveReferences();
 
+            // Apply vistors 
+            InlineModelVisitor.Run(apiDocument);
 
 
 
-
-
-            List<ControllerOperation> operations = new List<ControllerOperation>();
+			List<ControllerOperationDataModel> operations = new List<ControllerOperationDataModel>();
 
             // Setup
             OpenApiTag defaultTag = new() { Name = "Default" };
-            Dictionary<OpenApiTag, ControllerModel> controllerMap = new();
+            Dictionary<OpenApiTag, ControllerDataModel> controllerMap = new();
             foreach (KeyValuePair<string, OpenApiPathItem> pathProperty in apiDocument.Paths)
             {
                 foreach (KeyValuePair<OperationType, OpenApiOperation> operationProperty in pathProperty.Value.Operations)
                 {
                     OpenApiTag? tag = operationProperty.Value.Tags.FirstOrDefault() ?? defaultTag;
 
-                    if (!controllerMap.TryGetValue(tag, out ControllerModel model))
+                    if (!controllerMap.TryGetValue(tag, out ControllerDataModel model))
                     {
-                        model = new ControllerModel(tag.Name)
+                        model = new ControllerDataModel(tag.Name)
                         {
                             RootNamespace = defaultNamespace,
                         };
                         controllerMap[tag] = model;
                     }
 
-                    ControllerOperation controllerOperation = new ControllerOperation(pathProperty.Key, operationProperty.Key, operationProperty.Value);
+                    ControllerOperationDataModel controllerOperation = new ControllerOperationDataModel(pathProperty.Key, operationProperty.Key, operationProperty.Value);
                     model.Add(controllerOperation);
                     operations.Add(controllerOperation);
                 }
             }
 
             // Generate: Controllers
-            foreach (ControllerModel controller in controllerMap.Values)
+            foreach (ControllerDataModel controller in controllerMap.Values)
             {
-                factory.Generate(View.Controller, $"Controllers_{controller.TypeName}.cs", controller);
+				Logger.Information("Controller: {Name}", controller.TypeName);
+				factory.Generate(View.Controller, $"Controllers.{controller.TypeName}.cs", controller);
             }
 
             // Generate: Commands
-            foreach (ControllerOperation operation in operations)
+            foreach (ControllerOperationDataModel operation in operations)
             {
-                factory.Generate(View.ICommand, $"Commands_I{operation.MethodName}Command.cs", operation);
-                factory.Generate(View.Command, $"Commands_{operation.MethodName}Command.cs", operation);
+                Logger.Information("Command: {Name}", operation.MethodName);
+                factory.Generate(View.Command, $"Commands.{operation.MethodName}Command.cs", operation);
             }
 
             // Generate Extension 
@@ -136,40 +106,6 @@ namespace OpenApi.SourceGenerator
             {
                 ["Operations"] = operations
             });
-
-            //List<OperationModel> records = new();
-
-            //foreach (KeyValuePair<string, OpenApiPathItem> pathProperty in apiDocument.Paths)
-            //{
-            //    foreach (KeyValuePair<OperationType, OpenApiOperation> operationProperty in pathProperty.Value.Operations)
-            //    {
-            //        records.Generate(new OperationModel(pathProperty.Key, operationProperty.Key, operationProperty.Value));
-            //    }
-            //}
-
-
-            //OperationMapModel map = OperationMapModel.Create(records);
-            //foreach (OperationGroup operationGroup in map)
-            //{
-            //    string tag = operationGroup.Tag;
-
-            //    if (operationGroup.Operations.Count == 0)
-            //    {
-            //        continue;
-            //    }
-
-            //    factory.Generate(new ControllerModel(tag, operationGroup.Operations.Select()
-
-            ////    string content = m_handelbars.Compile("View/service.hbs", operationGroup);
-            //  //  sourceContext.AddSource($"{NamingConventionFormat.ToTypeName(tag)}Service.cs", SourceText.From(content, Encoding.UTF8));
-
-            //    foreach (OperationModel operationProperty in operationGroup.Operations)
-            //    {
-            //        string commandTemplate = m_handelbars.Compile("View/command.hbs", operationProperty);
-            //        string hintName = $"Commands_I{NamingConventionFormat.ToTypeName(operationProperty.Spec.OperationId)}Comamnd.cs";
-            //        sourceContext.AddSource(hintName, SourceText.From(commandTemplate, Encoding.UTF8));
-            //    }
-            //}
         }
 
         private static bool IsOpenApi(AdditionalText additionalText)

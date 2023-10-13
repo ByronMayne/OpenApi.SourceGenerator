@@ -5,11 +5,10 @@ using System.Text;
 
 namespace OpenApi.SourceGenerator.DataModels
 {
-
-    internal class CommandDataModel : ClassDataModel
-    {
-        public CommandDataModel() : base("command.hbs")
-        {
-        }
-    }
+	internal class EnumDataModel : ClassDataModel
+	{
+		public EnumDataModel(string view, params DataModel[] dataModels) : base(view)
+		{
+		}
+	}
 }
